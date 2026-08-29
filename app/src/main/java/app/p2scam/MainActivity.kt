@@ -1,6 +1,7 @@
 package app.p2scam
 
 import android.content.Context
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.SurfaceHolder
@@ -45,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -292,6 +294,8 @@ private fun ViewerScreen(
     var status by remember(config, reconnectKey) {
         mutableStateOf<CameraStatus>(CameraStatus.Connecting)
     }
+    val isLandscape =
+        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     Box(
         modifier = Modifier
@@ -305,31 +309,33 @@ private fun ViewerScreen(
             onStatus = { status = it },
         )
 
-        Surface(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .fillMaxWidth(),
-            color = Color.Black.copy(alpha = 0.72f),
-        ) {
-            Row(
+        if (!isLandscape) {
+            Surface(
                 modifier = Modifier
-                    .windowInsetsPadding(WindowInsets.safeDrawing)
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth(),
+                color = Color.Black.copy(alpha = 0.72f),
             ) {
-                Column {
-                    Text("P2S Cam", style = MaterialTheme.typography.titleMedium)
-                    Text(
-                        cameraStatusText(status),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                Row(
+                    modifier = Modifier
+                        .windowInsetsPadding(WindowInsets.safeDrawing)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column {
+                        Text("P2S Cam", style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            cameraStatusText(status),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Spacer(Modifier.weight(1f))
+                    if (status is CameraStatus.Failed || status is CameraStatus.Unauthorized) {
+                        TextButton(onClick = onRetry) { Text("Retry") }
+                    }
+                    TextButton(onClick = onEdit) { Text("Edit") }
                 }
-                Spacer(Modifier.weight(1f))
-                if (status is CameraStatus.Failed || status is CameraStatus.Unauthorized) {
-                    TextButton(onClick = onRetry) { Text("Retry") }
-                }
-                TextButton(onClick = onEdit) { Text("Edit") }
             }
         }
 
