@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "app.p2scam"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "app.p2scam"
