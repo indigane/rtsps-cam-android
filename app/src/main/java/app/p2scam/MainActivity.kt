@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -334,7 +333,7 @@ private fun ViewerScreen(
             }
         }
 
-        when (status) {
+        when (val currentStatus = status) {
             CameraStatus.Unauthorized -> ErrorCard(
                 title = "Access denied",
                 message = "Check the LAN access code on the printer.",
@@ -344,7 +343,7 @@ private fun ViewerScreen(
 
             is CameraStatus.Failed -> ErrorCard(
                 title = "Couldn't connect",
-                message = status.message?.takeIf { it.isNotBlank() }
+                message = currentStatus.message?.takeIf { it.isNotBlank() }
                     ?: "Check that the phone is on the same LAN and local liveview is enabled.",
                 onRetry = onRetry,
                 onEdit = onEdit,
