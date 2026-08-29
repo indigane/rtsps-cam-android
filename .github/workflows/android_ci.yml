@@ -10,16 +10,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK 37
+        run: sdkmanager "platforms;android-37"
+
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
+
       - name: Unit tests
         run: ./gradlew testDebugUnitTest
+
       - name: Build debug APK
         run: ./gradlew assembleDebug
+
       - uses: actions/upload-artifact@v4
         with:
           name: p2s-cam-debug
